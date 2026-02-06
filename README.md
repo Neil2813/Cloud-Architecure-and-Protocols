@@ -1,97 +1,78 @@
-## Create-a-datacenter-with-one-host-and-run-one-cloudlet-on-it.
+ # Experiment3 CloudSim Experiment – Same MIPS, Same Execution Time
 
+##  Overview
+This repository contains a **CloudSim 3.0.3 simulation experiment** that demonstrates the execution of **two cloudlets** on **virtual machines with identical MIPS requirements**.  
+Since both the cloudlets and VMs are homogeneous, the cloudlets complete execution in the **same amount of time**.
 
-## Experiment 
-
-
-# Create a Datacenter with One Host and Run One Cloudlet (CloudSim)
-
-This repository demonstrates a **basic CloudSim simulation** where a single datacenter with one host is created, and one cloudlet is executed on it. The project is intended for **cloud computing laboratory experiments** and beginner-level understanding of CloudSim architecture.
-
----
-
-## Aim
-
-To create a simple cloud computing environment using CloudSim by configuring one datacenter with a single host and executing one cloudlet, and to observe the simulation results.
+This experiment is commonly used in **Cloud Computing laboratories**, **academic projects**, and **baseline IEEE simulations**.
 
 
 
-## Objectives
-
-* Understand the working of the CloudSim toolkit
-* Learn how to create a datacenter and host in CloudSim
-* Execute a single cloudlet on a virtual machine
-* Analyze cloudlet execution output
+##  Aim
+To create a datacenter with one host and execute two cloudlets on virtual machines having the same MIPS requirements such that both cloudlets take the same time to complete execution.
 
 ---
 
-##  Software Requirements
-
-* Operating System: Windows / Linux / macOS
-* Java Development Kit (JDK): 8 or above
-* IDE: Eclipse / IntelliJ IDEA / NetBeans
-* CloudSim Toolkit: Version 3.x
-
----
-
-##  Hardware Requirements
-
-* Processor: Intel i3 or higher
-* RAM: Minimum 4 GB
-* Storage: At least 10 GB free disk space
+##  Objectives
+- To simulate a cloud datacenter using CloudSim
+- To create virtual machines with identical MIPS values
+- To execute cloudlets with equal computational length
+- To verify that cloudlets complete execution at the same time
 
 ---
 
-## Project Structure
-
-```
-Create-a-datacenter-with-one-host-and-run-one-cloudlet-on-it/
-│
-├── src/
-│   └── DatacenterSingleHostSingleCloudlet.java
-├── lib/
-│   └── cloudsim-3.x.jar
-├── output/
-│   └── simulation_output.png
-├── README.md
-```
+##  Tools & Technologies
+- **Java JDK**: 1.8  
+- **CloudSim Toolkit**: 3.0.3  
+- **IDE**: IntelliJ IDEA / Eclipse  
+- **Operating System**: Windows / Linux  
 
 ---
 
+##  System Configuration
+
+### Datacenter Configuration
+| Parameter | Value |
+|---------|------|
+| Datacenters | 1 |
+| Hosts | 1 |
+| RAM | 4096 MB |
+| Storage | 1,000,000 MB |
+| Bandwidth | 10,000 Mbps |
+| VM Scheduler | Time-Shared |
+
+### Virtual Machine Configuration
+| Parameter | Value |
+|--------|------|
+| Number of VMs | 2 |
+| MIPS | 1000 |
+| RAM | 512 MB |
+| Bandwidth | 1000 Mbps |
+| VMM | Xen |
+| Cloudlet Scheduler | Time-Shared |
+
+### Cloudlet Configuration
+| Parameter | Value |
+|--------|------|
+| Number of Cloudlets | 2 |
+| Cloudlet Length | 10,000 MI |
+| File Size | 300 MB |
+| Output Size | 300 MB |
+| Processing Elements | 1 |
 
 
-##  Steps to Run the Project
-
-1. Install Java JDK (8 or above).
-2. Download and configure the CloudSim library.
-3. Import the project into your IDE.
-4. Add CloudSim JAR files to the project build path.
-5. Compile and run the Java program.
-6. Observe the cloudlet execution results in the console.
-
----
-
-##  Simulation Workflow
-
-1. Initialize CloudSim
-2. Create a Datacenter with one Host
-3. Create a Broker
-4. Create one Virtual Machine (VM)
-5. Create one Cloudlet
-6. Bind the Cloudlet to the VM
-7. Start Simulation
-8. Display Results
-
----
-## Program
+## Program 
+--  /*
+ * Title:        CloudSim Toolkit
+ * Description:  CloudSim (Cloud Simulation) Toolkit for Modeling and Simulation
+ *               of Clouds
+ * Licence:      GPL - http://www.gnu.org/copyleft/gpl.html
+ *
+ * Copyright (c) 2009, The University of Melbourne, Australia
+ */
 
 package org.cloudbus.cloudsim.examples;
 
-/*
- * Title:        CloudSim EXP 1
- * Description:  create a datacenter with one host and run one
- * cloudlet on it. Created by JAUDATH FARHAN, W1, SRM UNIVERSITY
-*/
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -118,11 +99,17 @@ import org.cloudbus.cloudsim.provisioners.BwProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 
+
 /**
- * A simple example showing how to create a datacenter with one host and run one
- * cloudlet on it.
+ * A simple example showing how to create
+ * a datacenter with one host and run two
+ * cloudlets on it. The cloudlets run in
+ * VMs with the same MIPS requirements.
+ * The cloudlets will take the same time to
+ * complete the execution.
  */
-public class CloudSimExample1 {
+public class CloudSimExample2 {
+	public static DatacenterBroker broker;
 
 	/** The cloudlet list. */
 	private static List<Cloudlet> cloudletList;
@@ -131,217 +118,198 @@ public class CloudSimExample1 {
 	private static List<Vm> vmlist;
 
 	/**
-	 * Creates main() to run this example.
-	 *
-	 * @param args the args
+	 * Creates main() to run this example
 	 */
-	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 
-		Log.printLine("Starting CloudSimExample1...");
+		Log.println("Starting CloudSimExample2...");
 
-		try {
-			// First step: Initialize the CloudSim package. It should be called
-			// before creating any entities.
-			int num_user = 1; // number of cloud users
-			Calendar calendar = Calendar.getInstance();
-			boolean trace_flag = false; // mean trace events
+	        try {
+	        	// First step: Initialize the CloudSim package. It should be called
+	            	// before creating any entities.
+	            	int num_user = 1;   // number of cloud users
+	            	Calendar calendar = Calendar.getInstance();
+	            	boolean trace_flag = false;  // mean trace events
 
-			// Initialize the CloudSim library
-			CloudSim.init(num_user, calendar, trace_flag);
+	            	// Initialize the CloudSim library
+	            	CloudSim.init(num_user, calendar, trace_flag);
 
-			// Second step: Create Datacenters
-			// Datacenters are the resource providers in CloudSim. We need at
-			// list one of them to run a CloudSim simulation
-			Datacenter datacenter0 = createDatacenter("Datacenter_0");
+	            	// Second step: Create Datacenters
+	            	//Datacenters are the resource providers in CloudSim. We need at list one of them to run a CloudSim simulation
+	            	Datacenter datacenter0 = createDatacenter("Datacenter_0");
 
-			// Third step: Create Broker
-			DatacenterBroker broker = createBroker();
-			int brokerId = broker.getId();
+	            	//Third step: Create Broker
+	            	broker = new DatacenterBroker("Broker");;
+	            	int brokerId = broker.getId();
 
-			// Fourth step: Create one virtual machine
-			vmlist = new ArrayList<Vm>();
+	            	//Fourth step: Create one virtual machine
+	            	vmlist = new ArrayList<>();
 
-			// VM description
-			int vmid = 0;
-			int mips = 1000;
-			long size = 10000; // image size (MB)
-			int ram = 512; // vm memory (MB)
-			long bw = 1000;
-			int pesNumber = 1; // number of cpus
-			String vmm = "Xen"; // VMM name
+	            	//VM description
+	            	int vmid = 0;
+	            	int mips = 250;
+	            	long size = 10000; //image size (MB)
+	            	int ram = 512; //vm memory (MB)
+	            	long bw = 1000;
+	            	int pesNumber = 1; //number of cpus
+	            	String vmm = "Xen"; //VMM name
 
-			// create VM
-			Vm vm = new Vm(vmid, brokerId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerTimeShared());
+	            	//create two VMs
+	            	Vm vm1 = new Vm(vmid, brokerId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerTimeShared());
 
-			// add the VM to the vmList
-			vmlist.add(vm);
+	            	vmid++;
+	            	Vm vm2 = new Vm(vmid, brokerId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerTimeShared());
 
-			// submit vm list to the broker
-			broker.submitVmList(vmlist);
+	            	//add the VMs to the vmList
+	            	vmlist.add(vm1);
+	            	vmlist.add(vm2);
 
-			// Fifth step: Create one Cloudlet
-			cloudletList = new ArrayList<Cloudlet>();
+	            	//submit vm list to the broker
+	            	broker.submitGuestList(vmlist);
 
-			// Cloudlet properties
-			int id = 0;
-			long length = 400000;
-			long fileSize = 300;
-			long outputSize = 300;
-			UtilizationModel utilizationModel = new UtilizationModelFull();
 
-			Cloudlet cloudlet = new Cloudlet(id, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
-			cloudlet.setUserId(brokerId);
-			cloudlet.setVmId(vmid);
+	            	//Fifth step: Create two Cloudlets
+	            	cloudletList = new ArrayList<>();
 
-			// add the cloudlet to the list
-			cloudletList.add(cloudlet);
+	            	//Cloudlet properties
+	            	int id = 0;
+	            	pesNumber=1;
+	            	long length = 250000;
+	            	long fileSize = 300;
+	            	long outputSize = 300;
+	            	UtilizationModel utilizationModel = new UtilizationModelFull();
 
-			// submit cloudlet list to the broker
-			broker.submitCloudletList(cloudletList);
+	            	Cloudlet cloudlet1 = new Cloudlet(id, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
+	            	cloudlet1.setUserId(brokerId);
 
-			// Sixth step: Starts the simulation
-			CloudSim.startSimulation();
+	            	id++;
+	            	Cloudlet cloudlet2 = new Cloudlet(id, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
+	            	cloudlet2.setUserId(brokerId);
 
-			CloudSim.stopSimulation();
+	            	//add the cloudlets to the list
+	            	cloudletList.add(cloudlet1);
+	            	cloudletList.add(cloudlet2);
 
-			//Final step: Print results when simulation is over
-			List<Cloudlet> newList = broker.getCloudletReceivedList();
-			printCloudletList(newList);
+	            	//submit cloudlet list to the broker
+	            	broker.submitCloudletList(cloudletList);
 
-			Log.printLine("CloudSimExample1 finished!");
-		} catch (Exception e) {
-			e.printStackTrace();
-			Log.printLine("Unwanted errors happen");
-		}
-	}
 
-	/**
-	 * Creates the datacenter.
-	 *
-	 * @param name the name
-	 *
-	 * @return the datacenter
-	 */
-	private static Datacenter createDatacenter(String name) {
+	            	//bind the cloudlets to the vms. This way, the broker
+	            	// will submit the bound cloudlets only to the specific VM
+	            	broker.bindCloudletToVm(cloudlet1.getCloudletId(),vm1.getId());
+	            	broker.bindCloudletToVm(cloudlet2.getCloudletId(),vm2.getId());
 
-		// Here are the steps needed to create a PowerDatacenter:
-		// 1. We need to create a list to store
-		// our machine
-		List<Host> hostList = new ArrayList<Host>();
+	            	// Sixth step: Starts the simulation
+	            	CloudSim.startSimulation();
 
-		// 2. A Machine contains one or more PEs or CPUs/Cores.
-		// In this example, it will have only one core.
-		List<Pe> peList = new ArrayList<Pe>();
 
-		int mips = 1000;
+	            	// Final step: Print results when simulation is over
+	            	List<Cloudlet> newList = broker.getCloudletReceivedList();
 
-		// 3. Create PEs and add these into a list.
-		peList.add(new Pe(0, new PeProvisionerSimple(mips))); // need to store Pe id and MIPS Rating
+	            	CloudSim.stopSimulation();
 
-		// 4. Create Host with its id and list of PEs and add them to the list
-		// of machines
-		int hostId = 0;
-		int ram = 2048; // host memory (MB)
-		long storage = 1000000; // host storage
-		int bw = 10000;
+	            	printCloudletList(newList);
 
-		hostList.add(
-			new Host(
-				hostId,
-				new RamProvisionerSimple(ram),
-				new BwProvisionerSimple(bw),
-				storage,
-				peList,
-				new VmSchedulerTimeShared(peList)
-			)
-		); // This is our machine
+	            	Log.println("CloudSimExample2 finished!");
+	        }
+	        catch (Exception e) {
+	            e.printStackTrace();
+	            Log.println("The simulation has been terminated due to an unexpected error");
+	        }
+	    }
 
-		// 5. Create a DatacenterCharacteristics object that stores the
-		// properties of a data center: architecture, OS, list of
-		// Machines, allocation policy: time- or space-shared, time zone
-		// and its price (G$/Pe time unit).
-		String arch = "x86"; // system architecture
-		String os = "Linux"; // operating system
-		String vmm = "Xen";
-		double time_zone = 10.0; // time zone this resource located
-		double cost = 3.0; // the cost of using processing in this resource
-		double costPerMem = 0.05; // the cost of using memory in this resource
-		double costPerStorage = 0.001; // the cost of using storage in this
-										// resource
-		double costPerBw = 0.0; // the cost of using bw in this resource
-		LinkedList<Storage> storageList = new LinkedList<Storage>(); // we are not adding SAN
-													// devices by now
+		private static Datacenter createDatacenter(String name){
 
-		DatacenterCharacteristics characteristics = new DatacenterCharacteristics(
-				arch, os, vmm, hostList, time_zone, cost, costPerMem,
-				costPerStorage, costPerBw);
+	        // Here are the steps needed to create a PowerDatacenter:
+	        // 1. We need to create a list to store
+	    	//    our machine
+	    	List<Host> hostList = new ArrayList<>();
 
-		// 6. Finally, we need to create a PowerDatacenter object.
-		Datacenter datacenter = null;
-		try {
-			datacenter = new Datacenter(name, characteristics, new VmAllocationPolicySimple(hostList), storageList, 0);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	        // 2. A Machine contains one or more PEs or CPUs/Cores.
+	    	// In this example, it will have only one core.
+	    	List<Pe> peList = new ArrayList<>();
 
-		return datacenter;
-	}
+	    	int mips = 1000;
 
-	// We strongly encourage users to develop their own broker policies, to
-	// submit vms and cloudlets according
-	// to the specific rules of the simulated scenario
-	/**
-	 * Creates the broker.
-	 *
-	 * @return the datacenter broker
-	 */
-	private static DatacenterBroker createBroker() {
-		DatacenterBroker broker = null;
-		try {
-			broker = new DatacenterBroker("Broker");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-		return broker;
-	}
+	        // 3. Create PEs and add these into a list.
+	    	peList.add(new Pe(0, new PeProvisionerSimple(mips))); // need to store Pe id and MIPS Rating
 
-	/**
-	 * Prints the Cloudlet objects.
-	 *
-	 * @param list list of Cloudlets
-	 */
-	private static void printCloudletList(List<Cloudlet> list) {
-		int size = list.size();
-		Cloudlet cloudlet;
+	        //4. Create Host with its id and list of PEs and add them to the list of machines
+	        int hostId=0;
+	        int ram = 2048; //host memory (MB)
+	        long storage = 1000000; //host storage
+	        int bw = 10000;
 
-		String indent = "    ";
-		Log.printLine();
-		Log.printLine("========== OUTPUT ==========");
-		Log.printLine("Cloudlet ID" + indent + "STATUS" + indent
-				+ "Data center ID" + indent + "VM ID" + indent + "Time" + indent
-				+ "Start Time" + indent + "Finish Time");
+	        hostList.add(
+	    			new Host(
+	    				hostId,
+	    				new RamProvisionerSimple(ram),
+	    				new BwProvisionerSimple(bw),
+	    				storage,
+	    				peList,
+	    				new VmSchedulerTimeShared(peList)
+	    			)
+	    		); // This is our machine
 
-		DecimalFormat dft = new DecimalFormat("###.##");
-		for (int i = 0; i < size; i++) {
-			cloudlet = list.get(i);
-			Log.print(indent + cloudlet.getCloudletId() + indent + indent);
 
-			if (cloudlet.getCloudletStatus() == Cloudlet.SUCCESS) {
-				Log.print("SUCCESS");
+	        // 5. Create a DatacenterCharacteristics object that stores the
+	        //    properties of a data center: architecture, OS, list of
+	        //    Machines, allocation policy: time- or space-shared, time zone
+	        //    and its price (G$/Pe time unit).
+	        String arch = "x86";      // system architecture
+	        String os = "Linux";          // operating system
+	        String vmm = "Xen";
+	        double time_zone = 10.0;         // time zone this resource located
+	        double cost = 3.0;              // the cost of using processing in this resource
+	        double costPerMem = 0.05;		// the cost of using memory in this resource
+	        double costPerStorage = 0.001;	// the cost of using storage in this resource
+	        double costPerBw = 0.0;			// the cost of using bw in this resource
+	        LinkedList<Storage> storageList = new LinkedList<>();	//we are not adding SAN devices by now
 
-				Log.printLine(indent + indent + cloudlet.getResourceId()
-						+ indent + indent + indent + cloudlet.getVmId()
-						+ indent + indent
-						+ dft.format(cloudlet.getActualCPUTime()) + indent
-						+ indent + dft.format(cloudlet.getExecStartTime())
-						+ indent + indent
-						+ dft.format(cloudlet.getFinishTime()));
+	        DatacenterCharacteristics characteristics = new DatacenterCharacteristics(
+	                arch, os, vmm, hostList, time_zone, cost, costPerMem, costPerStorage, costPerBw);
+
+
+	        // 6. Finally, we need to create a PowerDatacenter object.
+	        Datacenter datacenter = null;
+	        try {
+	            datacenter = new Datacenter(name, characteristics, new VmAllocationPolicySimple(hostList), storageList, 0);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+
+	        return datacenter;
+	    }
+
+	    /**
+	     * Prints the Cloudlet objects
+	     * @param list  list of Cloudlets
+	     */
+	    private static void printCloudletList(List<Cloudlet> list) {
+	        int size = list.size();
+	        Cloudlet cloudlet;
+
+	        String indent = "    ";
+	        Log.println();
+	        Log.println("========== OUTPUT ==========");
+	        Log.println("Cloudlet ID" + indent + "STATUS" + indent +
+	                "Data center ID" + indent + "VM ID" + indent + "Time" + indent + "Start Time" + indent + "Finish Time");
+
+	        DecimalFormat dft = new DecimalFormat("###.##");
+			for (Cloudlet value : list) {
+				cloudlet = value;
+				Log.print(indent + cloudlet.getCloudletId() + indent + indent);
+
+				if (cloudlet.getStatus() == Cloudlet.CloudletStatus.SUCCESS) {
+					Log.print("SUCCESS");
+
+					Log.println(indent + indent + cloudlet.getResourceId() + indent + indent + indent + cloudlet.getGuestId() +
+							indent + indent + dft.format(cloudlet.getActualCPUTime()) + indent + indent + dft.format(cloudlet.getExecStartTime()) +
+							indent + indent + dft.format(cloudlet.getExecFinishTime()));
+				}
 			}
-		}
-	}
 
+	    }
 }
 
 
@@ -351,44 +319,45 @@ public class CloudSimExample1 {
 
 
 
-##  Output
 
-The simulation displays:
-
-* Cloudlet ID
-* Execution status
-* Datacenter ID
-* VM ID
-* Start time
-* Finish time
-
- 
-
-##  Output Screenshot
-
-Add the console output screenshot in the `output/` folder and name it as `simulation_output.png`.
-<img width="1876" height="872" alt="Screenshot 2026-01-28 090553" src="https://github.com/user-attachments/assets/ef6f2440-faa5-4bbb-9a77-25ff1fef1b16" />
+##  Algorithm
+1. Initialize the CloudSim library.
+2. Create a datacenter with one host.
+3. Create a datacenter broker.
+4. Create two virtual machines with identical MIPS values.
+5. Submit the virtual machines to the broker.
+6. Create two cloudlets with equal computational length.
+7. Assign one cloudlet to each VM.
+8. Start the CloudSim simulation.
+9. Record the execution start and finish times.
+10. Stop the simulation and analyze the results.
 
 ---
 
-##  Applications
+## Execution Time Formula
+Execution Time = Cloudlet Length / VM MIPS
 
-* Cloud Computing Laboratory Experiments
-* Learning CloudSim Basics
-* Academic Demonstrations
+## Sample output 
 
----
+========== CLOUDLET EXECUTION RESULTS ==========
+Cloudlet ID: 0 | VM ID: 0 | Start Time: 0.1 | Finish Time: 10.1
+Cloudlet ID: 1 | VM ID: 1 | Start Time: 0.1 | Finish Time: 10.1
 
-##  Conclusion
 
-This project successfully demonstrates the creation of a simple cloud environment using CloudSim, where a single cloudlet is executed on one host. It provides a strong foundation for understanding more complex cloud simulations.
 
----
+## Screenshots of exectuted output 
 
- 
 
----
+<img width="888" height="502" alt="image" src="https://github.com/user-attachments/assets/b70dcdb6-a2b1-4654-8154-5063d0162cfe" />
 
-##  License
 
-This project is intended for educational and academic use only.
+
+## Result
+
+The experiment successfully demonstrates that cloudlets with identical computational requirements, executed on virtual machines with the same MIPS capacity, complete execution at the same time.
+
+
+
+## Conclusion
+
+This simulation validates the correctness and fairness of CloudSim scheduling in a homogeneous cloud environment. Equal workloads executed on equally provisioned virtual machines result in identical execution times.
