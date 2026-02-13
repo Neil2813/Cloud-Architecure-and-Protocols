@@ -201,4 +201,3 @@ The experiment successfully demonstrates that cloudlets executed on higher MIPS 
 This simulation validates that CloudSim scheduling accurately reflects performance differences in heterogeneous cloud environments. Higher MIPS virtual machines reduce execution time for identical workloads.
 
 
-
